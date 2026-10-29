@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> How Well Do You Know Me?</title>
+<style>
+body{font-family: Inter,system-ui,sans-serif; background:#0f0f0f;color:#fff;min-height:100vh;margin:0;display:flex;justify-content:center;padding:20px}
+.card{background:#lalala;border;1px solid #2a2a2a;border-radius:20px;padding:28px;max-width:520px;width:100%;text-align:center}
+.profile{width:130px:height:130px;border-radius:50%;object-fit:cover;border:3px solid #fff;margin:0 auto 12px;display:block}
+.caption{font-size:15px;font-weight:600;margin-bottom:6px}
+.subcaption{font-size:13px;color:#999;margin-bottom:20px}
+.q-title{font-weight:600;margin-bottom:12px}
+.opt{display:flex;gap:10px;padding:10px 12px;margin:6px 0;background:#191919;border:1px solid #333;border-radius:10px;cursor:pointer}
+.btn{width:100%;margin-top:20px;background:#fff;color:#000;border:0;padding:14px;border-radius:12px;font-weight:700;font-size:16px;cursor:pointer}
+.linkBox{margin-top:16px;background:#111;border:1px dashed #444;padding:12px;border-radius:10px;word-break:break-all;font-size:13px;color:#8ef0a0;text-align:left}
+.result{margin-top:18px;padding:16px;background:#111;border-radius:14px;border:1px solid #333;text-align:left}
+.badge{display:inline-block;padding:6px 10px;border-radius:999px;background:#fff;color:#000;font-weight:700;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="card" id="app"></div>
+<script>
+const QUESTIONS = [
+{ q: "What's my favorite car brand?", options: ["BMW", "Mercedes","Audi","Tesla"], answer: "BMW" },
+{ q: "What's my favorite food to eat?", ["Burgers", "Sushi", "Pizza", "Fries", answer: "Burger" }
+ q: "How tall am I?", options: ["5ft4","5ft6","5ft2","5ft8"], answer: "5ft4" },
+  { q: "What color are my eyes?", options: ["Brown","Blue","Green","Hazel"], answer: "Brown" },
+  { q: "How many piercings do I have?", options: ["4","2","6","0"], answer: "4" },
+  { q: "What's my birthday month?", options: ["March","June","January","December"], answer: "March" },
+  { q: "What's my favorite color?", options: ["Red","Black","Blue","Pink"], answer: "Red" },
+  { q: "Am I a morning person or night owl?", options: ["Morning person","Night owl","Both","Neither"], answer: "Morning person" },
+  { q: "What's my go-to drink?", options: ["Energy drink","Water","Juice","Soda"], answer: "Energy drink" },
+  { q: "How many siblings do I have?", options: ["1","0","2","3+"], answer: "1" },
+  { q: "What's my ideal date?", options: ["Arcade date","Movies","Dinner","Stay-in"], answer: "Arcade date" },
+  { q: "What music do I listen to most?", options: ["Hip hop","Amapiano","R&B","Afrobeats"], answer: "Hip hop" },
+  { q: "What's my worst habit?", options: ["Energized too much","Overthinking","Being late","Spending too much"], answer: "Energized too much" },
+  { q: "What would I spend R5000 on instantly?", options: ["Gym stuff","Clothes","Food","Hair / Nails"], answer: "Gym stuff" },
+  { q: "What app do I use the most?", options: ["Instagram","TikTok","WhatsApp","YouTube"], answer: "Instagram" },
+  { q: "What's my biggest ick?", options: ["Bad hygiene","Lying","Arrogance","Broke boys"], answer: "Bad hygiene" },
+  { q: "What's my love language?", options: ["Annoying you","Words","Gifts","Physical touch"], answer: "Annoying you" },
+  { q: "Am I more introverted or extroverted?", options: ["Extroverted","Introverted","Ambivert","Depends"], answer: "Extroverted" },
+  { q: "What scares me the most?", options: ["Losing you","Heights","Failure","Being alone"], answer: "Losing you" },
+  { q: "What's my most used emoji?", options: ["😅","😂","😏","❤️"], answer: "😅" },
+  { q: "What would my superpower be?", options: ["Web slinging","Teleport","Invisibility","Time travel"], answer: "Web slinging" },
+  { q: "What's my biggest red flag?", options: ["Loving too much","Jealous","Stubborn","Overthinker"], answer: "Loving too much" },
+  { q: "What's my biggest green flag?", options: ["Caring too much","Loyal","Funny","Honest"], answer: "Caring too much" },
+  { q: "Do I catch feelings fast or slow?", options: ["Fast","Slow","Never","Depends"], answer: "Fast" },
+  { q: "What's my favorite season?", options: ["Summer","Winter","Spring","Autumn"], answer: "Summer" },
+  { q: "What's one thing people always get wrong about me?", options: ["I'm mean","I'm shy","I'm bougie","I'm always happy"], answer: "I'm mean" }
+];
+
+const PROFILE_IMG = "me.jpg";
+const params = new URLSearchParams(location.search);
+const dataParam = params.get('d');
+function encodeData(arr){ return btoa(unescape(encodeURIComponent(JSON.stringify(arr)))) }
+function encodeData(arr){ return btoa(unescape(encodeURIComponent(JSON.stringify(arr)))) }
+function decodeData(str){ try{ return JSON.parse(decodeURIComponent(escape(atob(str)))) }catch(e){ return null } }
+function headerHtml(){
+  return `<img src="${PROFILE_IMG}" class="profile"><div class="caption">Think you know me? Prove it 😏</div><div class="subcaption">26 questions - how well do you know me?</div>`;
+}
+function renderCreate(){
+  document.getElementById('app').innerHTML = `${headerHtml()}<div id="qs"></div><button class="btn" id="genBtn">Generate Share Link</button><div id="linkOut"></div>`;
+  const qsDiv = document.getElementById('qs');
+  QUESTIONS.forEach((item, idx)=>{
+    const html = `<div class="q"><div class="q-title">${idx+1}. ${item.q}</div>
+      ${item.options.map((opt,i)=>{
+        const letter = String.fromCharCode(65+i);
+        return `<label class="opt"><input type="radio" name="q${idx}" value="${opt}" ${opt===item.answer?'checked':''}> ${letter}) ${opt}</label>`
+      }).join('')}</div>`;
+    qsDiv.insertAdjacentHTML('beforeend', html);
+  });
+  document.getElementById('genBtn').onclick = ()=>{
+    const answers = [];
+    for(let i=0;i<QUESTIONS.length;i++){ answers.push(document.querySelector(`input[name="q${i}"]:checked`).value); }
+    const code = btoa(unescape(encodeURIComponent(JSON.stringify(answers))));
+    const link = `${location.origin}${location.pathname}?d=${code}`;
+    document.getElementById('linkOut').innerHTML = `<div class="linkBox">${link}</div><button class="btn" onclick="navigator.clipboard.writeText('${link}');this.innerText='Copied!'">Copy Link</button>`;
+  };
+}
+function renderTake(correctAnswers){
+  document.getElementById('app').innerHTML = `${headerHtml()}<div id="qs"></div><button class="btn" id="submitBtn">See My Score</button><div id="result"></div>`;
+  const qsDiv = document.getElementById('qs');
+  QUESTIONS.forEach((item, idx)=>{
+    const html = `<div class="q"><div class="q-title">${idx+1}. ${item.q}</div>
+      ${item.options.map((opt,i)=>{
+        const letter = String.fromCharCode(65+i);
+        return `<label class="opt"><input type="radio" name="q${idx}" value="${opt}"> ${letter}) ${opt}</label>`
+      }).join('')}</div>`;
+    qsDiv.insertAdjacentHTML('beforeend', html);
+  });
+  document.getElementById('submitBtn').onclick = ()=>{
+    const userAns = [];
+    for(let i=0;i<QUESTIONS.length;i++){
+      const sel = document.querySelector(`input[name="q${i}"]:checked`);
+      if(!sel){ alert('Answer all '+QUESTIONS.length+' questions!'); return; }
+      userAns.push(sel.value);
+    }
+    let score=0, details='';
+    userAns.forEach((ans,i)=>{
+      const ok = ans===correctAnswers[i];
+      if(ok) score++;
+      details+= `<div style="margin:6px 0;padding:8px;background:${ok?'#132e1a':'#2e1515'};border-radius:8px;">${ok?'✅':'❌'} Q${i+1}: You picked <b>${ans}</b> — ${ok?'Correct!':`I said <b>${correctAnswers[i]}</b>`}</div>`;
+    });
+    const pct = Math.round(score/QUESTIONS.length*100);
+    document.getElementById('result').innerHTML = `<div class="result"><div class="badge">${pct}% — You know me ${pct}%</div><div style="font-weight:700;margin-bottom:8px;">${score}/${QUESTIONS.length} correct</div>${details}</div>`;
+  };
+}
+if(dataParam){
+  const decoded = decodeData(dataParam);
+  if(decoded) renderTake(decoded); else renderCreate();
+} else { renderCreate(); }
+</script>
+</body>
+</html>
